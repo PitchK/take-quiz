@@ -16,16 +16,19 @@ function removePreviousElementsAndCreateNewOnes(){
     for(var i = 0; i < 4; i++){
         document.getElementsByClassName('choiceHolder')[0].remove();
     }
-    
-    var randomNumber = Math.trunc(Math.random()*listOfQuestions.length)+1;
-    storage.push(randomNumber-1);
-    console.log(storage);
+
+    if(listOfQuestions[questionNumber-1].type !== 'in order'){
+        rearrange(randomChoice);
+        console.log(randomChoice);
+    }else{
+        randomChoice = [1, 2, 3, 4];
+    }
 
     var t = document.createElement('p');
     t.className = 'question';
-    t.innerHTML = questionNumber + '. ' + listOfQuestions[randomNumber-1].question;
+    t.innerHTML = questionNumber + '. ' + listOfQuestions[questionNumber-1].question;
     document.getElementById('quizContent').appendChild(t);
-    for (var i = 0; i < listOfQuestions[randomNumber-1].choices.length; i++){
+    for (var i = 0; i < listOfQuestions[questionNumber-1].choices.length; i++){
         var d = document.createElement('div');
         d.className = 'choiceHolder';
         document.getElementById('quizContent').appendChild(d);
@@ -37,7 +40,7 @@ function removePreviousElementsAndCreateNewOnes(){
 
         var answerContent = document.createElement('p');
         answerContent.className = 'choiceContent';
-        answerContent.innerHTML = listOfQuestions[randomNumber-1].choices[randomChoice[i] - 1];
+        answerContent.innerHTML = listOfQuestions[questionNumber-1].choices[randomChoice[i] - 1];
         document.getElementsByClassName('choiceHolder')[i].appendChild(answerContent);
     }
 
@@ -48,7 +51,7 @@ function removePreviousElementsAndCreateNewOnes(){
 }
 function nextQuestion(){
     questionNumber++;
-    
+    document.getElementsByClassName('leftNav')[0].style.opacity = '1';
     document.getElementsByClassName('question')[0].style.transform = 'translate(-3000px, 0px)';
     for (var i = 0; i < 4; i++){
         document.getElementsByClassName('choiceHolder')[i].style.transform = 'translate(-3000px, 0px)';
@@ -57,34 +60,45 @@ function nextQuestion(){
     document.getElementsByClassName('midNav')[0].innerHTML = "Question " + questionNumber + " of 10"
 }
 
+function previousQuestion(){
+    if(document.getElementsByClassName('leftNav')[0].style.opacity !== '0.4'){
+        questionNumber--;
+        if(questionNumber == 1){
+            document.getElementsByClassName('leftNav')[0].style.opacity = '0.4';
+        }else{
+            document.getElementsByClassName('leftNav')[0].style.opacity = '1';
+        }
+        document.getElementsByClassName('question')[0].style.transform = 'translate(3000px, 0px)';
+        for (var i = 0; i < 4; i++){
+            document.getElementsByClassName('choiceHolder')[i].style.transform = 'translate(3000px, 0px)';
+        }
+        setTimeout(removePreviousElementsAndCreateNewOnes, 500);
+        document.getElementsByClassName('midNav')[0].innerHTML = "Question " + questionNumber + " of 10"
+    }
+    
+}
+
 function startQuiz(){
     console.log(questionNumber);
     storage = [];
     document.getElementById('bigTitle').style.display = 'none';
     document.getElementById('getStarted').style.display = 'none';
-
-    var foundInStorage;
-    var randomNumber = Math.trunc(Math.random()*listOfQuestions.length)+1;
-    storage.push(randomNumber-1);
-    /*while(foundInStorage !== true){
-        var randomNumber = Math.trunc(Math.random()*listOfQuestions.length)+1;
-        for(var i = 0; i < storage.length; i++){
-            if(storage[i] == randomNumber){
-                foundInStorage = true;
-                break;
-            }
-        }
-    }*/
+    rearrange(listOfQuestions);
+    console.log(listOfQuestions);
 
     var t = document.createElement('p');
     t.className = 'question';
-    t.innerHTML = "1. " + listOfQuestions[randomNumber-1].question;
+    t.innerHTML = "1. " + listOfQuestions[questionNumber-1].question;
     document.getElementById('quizContent').appendChild(t);
 
-    rearrange(randomChoice);
-    console.log(randomChoice);
-
-    for (var i = 0; i < listOfQuestions[randomNumber-1].choices.length; i++){
+    if(listOfQuestions[questionNumber-1].type !== 'in order'){
+        rearrange(randomChoice);
+        console.log(randomChoice);
+    }else{
+        randomChoice = [1, 2, 3, 4];
+    }
+    
+    for (var i = 0; i < listOfQuestions[questionNumber-1].choices.length; i++){
         var d = document.createElement('div');
         d.className = 'choiceHolder';
         document.getElementById('quizContent').appendChild(d);
@@ -95,7 +109,7 @@ function startQuiz(){
 
         var answerContent = document.createElement('p');
         answerContent.className = 'choiceContent';
-        answerContent.innerHTML = listOfQuestions[randomNumber-1].choices[randomChoice[i] - 1];
+        answerContent.innerHTML = listOfQuestions[questionNumber-1].choices[randomChoice[i] - 1];
         document.getElementsByClassName('choiceHolder')[i].appendChild(answerContent);
     }
 
@@ -123,6 +137,7 @@ function startQuiz(){
     }
 
     document.getElementsByClassName('rightNav')[0].addEventListener('click', nextQuestion);
+    document.getElementsByClassName('leftNav')[0].addEventListener('click', previousQuestion);
 }
 
 function select(){
@@ -135,7 +150,6 @@ function select(){
         this.style.backgroundColor = 'white';
     }
 }
-
 
 console.log(document.getElementById('topHeader').style.height);
 document.getElementById('getStarted').addEventListener('click', startQuiz);
