@@ -43,6 +43,7 @@ body{
     margin-bottom: 2%;
     margin-left: 20%;
     margin-right: 20%;
+    transition: 0.5s;
 }
 
 .choiceEmpty{
