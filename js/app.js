@@ -15,6 +15,20 @@ for(var i = 0; i < 10; i++){
     userTimes.push(null);
 }
 
+var devOrientation = '';
+//decide whether navigation bar will show right or left arrow; make mobile compatible
+function decideLorR(x){
+    if(x.matches){
+        devOrientation = 'portrait';
+    }else{
+        devOrientation = 'landscape';
+    }
+}
+
+var x = window.matchMedia("(orientation: portrait)");
+decideLorR(x);
+x.addListener(decideLorR);
+
 function rearrange(array){
     for (var i = array.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
@@ -36,7 +50,8 @@ function scanChoices(){
 }
 
 function calculateScore(){
-    document.getElementById('quizContent').remove();
+    
+    document.getElementById('quizContent').style.display = 'block';
     document.getElementById('navigation').remove();
     var userScore = 0;
     var currentStreak = 0;
@@ -50,8 +65,8 @@ function calculateScore(){
             currentStreak++;
             correctQuestions++;
             userScore+= 1000 + (currentStreak * 75);
-            userScore+= 2500 - (userTimes[i] / 10);
-            totalSpeedScore += 2500 - (userTimes[i] / 10);
+            userScore+= 500 - (userTimes[i] / 10);
+            totalSpeedScore += 500 - (userTimes[i] / 10);
             totalStreakScore += (currentStreak * 75);
             userStreaks.push(currentStreak);
         }else{
@@ -63,6 +78,10 @@ function calculateScore(){
     document.getElementById('imtoolazyforthis').style.display = 'block';
     document.getElementById('score').innerHTML = Math.round(userScore);
     streaks.push(currentStreak);
+
+    if(devOrientation === 'portrait'){
+        document.getElementById('scoreBreakdown2').style.display = 'none';
+    }
 
     //find maximum streak
     var foundStreak = -1;
@@ -132,8 +151,28 @@ function calculateScore(){
         }
         document.getElementById('linkHolder').appendChild(e);
     }
-    document.getElementsByClassName('links')[1].style.marginLeft = '20%';
+    if(devOrientation === 'landscape'){
+        document.getElementsByClassName('links')[1].style.marginLeft = '20%';
+        
     createDetailedScoreBreakdown();
+    }
+
+}
+
+function revert(){
+    for (var i = 0; i < 4; i++){
+        document.getElementsByClassName('holder')[0].remove();
+    }
+
+    for (var j = 0; j < 10; j++){
+        document.getElementsByClassName('detailHolder')[0].remove();
+    }
+    document.getElementById('linkHolder').remove();
+    document.getElementById('firstDetailHolder').remove();
+    document.getElementById('imtoolazyforthis').style.display = 'none';
+    document.getElementById('topHeader').style.display = 'block';
+    document.getElementById('bigTitle').style.display = 'block';
+    document.getElementById('getStarted').style.display = 'block';
 }
 
 var alphabeticalReference = ['N/A', 'A', 'B', 'C', 'D'];
@@ -212,7 +251,7 @@ function createDetailedScoreBreakdown(){
         var h = document.createElement('p');
         h.className = 'eighthCol';
         if(alphabeticalReference[userResults[i]] === alphabeticalReference[listOfQuestions[i].choices.indexOf(listOfQuestions[i].answer)+1]){
-            h.innerHTML = "+" + Math.round(2500 - (userTimes[i] / 10));
+            h.innerHTML = "+" + Math.round(500 - (userTimes[i] / 10));
         }else{
             h.innerHTML = "+0";
         }
@@ -222,13 +261,14 @@ function createDetailedScoreBreakdown(){
         var aa = document.createElement('p');
         aa.className = 'ninthCol';
         if(alphabeticalReference[userResults[i]] === alphabeticalReference[listOfQuestions[i].choices.indexOf(listOfQuestions[i].answer)+1]){
-            aa.innerHTML = "+" + (1000 + (userStreaks[i]*75) + Math.round(2500 - (userTimes[i] / 10)));
+            aa.innerHTML = "+" + (1000 + (userStreaks[i]*75) + Math.round(500 - (userTimes[i] / 10)));
         }else{
             aa.innerHTML = "+0";
         }
         document.getElementsByClassName('detailHolder')[i].appendChild(aa)
     }
     document.getElementsByClassName('detailHolder')[document.getElementsByClassName('detailHolder').length - 1].style.borderBottom = '3px solid black';
+    document.getElementsByClassName('links')[1].addEventListener('click', revert);
 }
 
 function removePreviousElementsAndCreateNewOnes(){
@@ -320,10 +360,22 @@ function previousQuestion(){
         setTimeout(removePreviousElementsAndCreateNewOnes, 150);
         document.getElementsByClassName('midNav')[0].innerHTML = "Question " + questionNumber + " of 10"
     }
-    document.getElementsByClassName('rightNav')[0].innerHTML = 'Next question 🡢';
+    if(devOrientation === 'landscape'){
+        document.getElementsByClassName('rightNav')[0].innerHTML = 'Next question 🡢';
+
+    }else{
+        document.getElementsByClassName('rightNav')[0].innerHTML = '🡢';
+    }
 }
+    
 
 function startQuiz(){ 
+questionNumber = 1;
+randomChoice = [1, 2, 3, 4];
+userResults = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+userTimes = [];
+userStreaks = [];
+streaks = [];
     storage = [];
     document.getElementById('bigTitle').style.display = 'none';
     document.getElementById('getStarted').style.display = 'none';
@@ -333,6 +385,8 @@ function startQuiz(){
     t.className = 'question';
     t.innerHTML = "1. " + listOfQuestions[questionNumber-1].question;
     document.getElementById('quizContent').appendChild(t);
+
+    questionNumber = 1;
 
     for(var j = 0; j < listOfQuestions.length; j++){
         if(listOfQuestions[j].type !== 'in order'){
@@ -359,24 +413,41 @@ function startQuiz(){
     nav.id = 'navigation';
     document.body.appendChild(nav);
 
+    var sNav = document.createElement('div');
+    sNav.id = 'subNavigation';
+    document.getElementById('navigation').appendChild(sNav);
+
     var left = document.createElement('p');
-    left.innerHTML = '🡠 Prev. question'
+    if(devOrientation === 'landscape'){
+        left.innerHTML = '🡠 Prev. question'
+    
+    }else{
+        left.innerHTML = '🡠'
+    }
+    
     left.className = 'leftNav';
-    document.getElementById('navigation').appendChild(left);
+    document.getElementById('subNavigation').appendChild(left);
 
     var mid = document.createElement ('p');
     mid.innerHTML = 'Question 1 of 10';
     mid.className = 'midNav';
-    document.getElementById('navigation').appendChild(mid);
+    document.getElementById('subNavigation').appendChild(mid);
 
     var right = document.createElement('p');
-    right.innerHTML = 'Next question 🡢'
+    if(devOrientation === 'landscape'){
+        right.innerHTML = 'Next question 🡢'
+    }else{
+        right.innerHTML = '🡢';
+    }
+    
     right.className = 'rightNav';
-    document.getElementById('navigation').appendChild(right);
+    document.getElementById('subNavigation').appendChild(right);
 
     for(var j = 0; j < 4; j++){
         document.getElementsByClassName('choiceHolder')[j].addEventListener('click', select);
     }
+
+    questionNumber = 1;
 
     document.getElementsByClassName('rightNav')[0].addEventListener('click', nextQuestion);
     document.getElementsByClassName('leftNav')[0].addEventListener('click', previousQuestion);
