@@ -9,6 +9,8 @@ var userStreaks = [];
 var streaks = [];
 var detect;
 var FirstDateGlobal;
+var isGoingOver;
+var actualGoingOver;
 
 //setup
 for(var i = 0; i < 10; i++){
@@ -28,6 +30,14 @@ function decideLorR(x){
 var x = window.matchMedia("(orientation: portrait)");
 decideLorR(x);
 x.addListener(decideLorR);
+
+
+if(devOrientation === 'portrait'){
+    document.getElementById('leftArrow').remove();
+    document.getElementById('rightArrow').remove();
+}
+
+document.getElementById('outerNavigation').style.display = 'none';
 
 function rearrange(array){
     for (var i = array.length - 1; i > 0; i--) {
@@ -49,10 +59,34 @@ function scanChoices(){
     /*console.log(userResults);*/
 }
 
+function goOver(){
+    for (var i = 0; i < 4; i++){
+        document.getElementsByClassName('holder')[0].remove();
+    }
+
+    for (var j = 0; j < 10; j++){
+        if(devOrientation === 'landscape'){
+            document.getElementsByClassName('detailHolder')[0].remove();
+        }
+        
+    }
+    document.getElementById('linkHolder').remove();
+    if(devOrientation === 'landscape'){
+        document.getElementById('firstDetailHolder').remove();
+    }
+
+    document.getElementById('imtoolazyforthis').style.display = 'none';
+    isGoingOver = true;
+    startQuiz();
+}
+
 function calculateScore(){
     
     document.getElementById('quizContent').style.display = 'block';
-    document.getElementById('navigation').remove();
+    
+    if(isGoingOver === true){
+        document.getElementById('explanationHolder').remove();
+    }
     var userScore = 0;
     var currentStreak = 0;
     var correctQuestions = 0;
@@ -272,15 +306,17 @@ function createDetailedScoreBreakdown(){
     }
     
     document.getElementsByClassName('links')[1].addEventListener('click', revert);
+    document.getElementsByClassName('links')[0].addEventListener('click', goOver);
 }
 
 function removePreviousElementsAndCreateNewOnes(){
+    
     document.getElementsByClassName('question')[0].remove();
     for(var i = 0; i < 4; i++){
         document.getElementsByClassName('choiceHolder')[0].remove();
     }
 
-    if(listOfQuestions[questionNumber-1].type !== 'in order'){
+    if(listOfQuestions[questionNumber-1].type !== 'in order' && isGoingOver === false){
         rearrange(randomChoice);
     }else{
         randomChoice = [1, 2, 3, 4];
@@ -294,7 +330,6 @@ function removePreviousElementsAndCreateNewOnes(){
         var d = document.createElement('div');
         d.className = 'choiceHolder';
         document.getElementById('quizContent').appendChild(d);
-        document.getElementById('choiceHolder')
 
         var empty = document.createElement('div');
         empty.className = 'choiceEmpty';
@@ -311,79 +346,179 @@ function removePreviousElementsAndCreateNewOnes(){
     }
 
     for(var j = 0; j < 4; j++){
-        document.getElementsByClassName('choiceHolder')[j].addEventListener('click', select);
+        if(isGoingOver === false){
+             document.getElementsByClassName('choiceHolder')[j].addEventListener('click', select);
+        }
+    }
+
+    if(devOrientation === 'landscape'){
+        document.getElementById('rightArrow').style.display = 'block';
+        document.getElementById('leftArrow').style.display = 'block';
+    }
+
+    if(isGoingOver === true){
+        if(userResults[questionNumber - 1] - 1 === listOfQuestions[questionNumber - 1].choices.indexOf(listOfQuestions[questionNumber - 1].answer)){
+            document.getElementsByClassName('choiceHolder')[userResults[questionNumber - 1] - 1].style.border = '2px solid green';
+            document.getElementsByClassName('choiceHolder')[userResults[questionNumber - 1] - 1].style.backgroundColor = 'lightgreen';
+            document.getElementsByClassName('choiceEmpty')[userResults[questionNumber - 1] - 1].style.backgroundColor = 'blue';
+
+        }else{
+            if(userResults[questionNumber - 1] - 1 === -1){
+                document.getElementsByClassName('choiceHolder')[listOfQuestions[questionNumber - 1].choices.indexOf(listOfQuestions[questionNumber - 1].answer)].style.border = '2px solid green';
+                document.getElementsByClassName('choiceHolder')[listOfQuestions[questionNumber - 1].choices.indexOf(listOfQuestions[questionNumber - 1].answer)].style.backgroundColor = 'lightgreen';
+
+            }else{
+                document.getElementsByClassName('choiceHolder')[listOfQuestions[questionNumber - 1].choices.indexOf(listOfQuestions[questionNumber - 1].answer)].style.border = '2px solid green';
+                document.getElementsByClassName('choiceHolder')[listOfQuestions[questionNumber - 1].choices.indexOf(listOfQuestions[questionNumber - 1].answer)].style.backgroundColor = 'lightgreen';
+
+                document.getElementsByClassName('choiceHolder')[userResults[questionNumber - 1] - 1].style.border = '2px solid red';
+                document.getElementsByClassName('choiceHolder')[userResults[questionNumber - 1] - 1].style.backgroundColor = '#e38484';
+                document.getElementsByClassName('choiceEmpty')[userResults[questionNumber - 1] - 1].style.backgroundColor = 'blue';
+
+            }
+        }
+
+        createExplanations();
     }
 }
 
 function nextQuestion(){
-    if(userTimes[questionNumber - 1] == null){
-        var elapsedTime = new Date().getTime() - FirstDateGlobal;
-        userTimes[questionNumber - 1] = elapsedTime;
-        /*console.log('For question' + questionNumber + ": " + "Elapsed time is " + elapsedTime);
-        console.log('List is ' + userTimes);*/
+    if (isGoingOver === false){
+        if(userTimes[questionNumber - 1] == null){
+            var elapsedTime = new Date().getTime() - FirstDateGlobal;
+            userTimes[questionNumber - 1] = elapsedTime;
+            /*console.log('For question' + questionNumber + ": " + "Elapsed time is " + elapsedTime);
+            console.log('List is ' + userTimes);*/
+        }
+    }
+
+    if(isGoingOver === false){
+        scanChoices();
     }
     
-    scanChoices();
-    if(this.innerHTML !== 'Finish quiz 🡢'){
+    if(questionNumber !== 10){
         questionNumber++;
-        if(questionNumber === 10){
-            this.innerHTML = 'Finish quiz 🡢';
+
+        if(devOrientation === 'portrait'){
+            document.getElementsByClassName('leftNav')[0].style.opacity = '1';
+        }else{
+            document.getElementById('leftArrow').style.opacity = '1';
         }
-        document.getElementsByClassName('leftNav')[0].style.opacity = '1';
         document.getElementsByClassName('question')[0].style.display = 'none';
-            for (var i = 0; i < 4; i++){
-                document.getElementsByClassName('choiceHolder')[i].style.display = 'none';
-            }
+        
+        for (var i = 0; i < 4; i++){
+            document.getElementsByClassName('choiceHolder')[i].style.display = 'none';
+        }
+        if(isGoingOver === true){
+            document.getElementById('explanationHolder').remove();
+        }
+        if(devOrientation === 'landscape'){
+            document.getElementById('rightArrow').style.display = 'none';
+            document.getElementById('leftArrow').style.display = 'none';
+        }
+        
         setTimeout(removePreviousElementsAndCreateNewOnes, 150);
-        document.getElementsByClassName('midNav')[0].innerHTML = "Question " + questionNumber + " of 10";
+        if(devOrientation === 'portrait'){
+            document.getElementsByClassName('midNav')[0].innerHTML = "Question " + questionNumber + " of 10";
+        }
+        
         FirstDateGlobal = new Date().getTime();
     }else{
         document.getElementsByClassName('question')[0].remove();
         for(var i = 0; i < 4; i++){
             document.getElementsByClassName('choiceHolder')[0].remove();
         }
-        document.getElementById('navigation').style.bottom = '-50%';
+        if(devOrientation === 'portrait'){
+            document.getElementById('navigation').style.bottom = '-50%';
+        }else{
+            document.getElementById('leftArrow').style.display = 'none';
+            document.getElementById('rightArrow').style.display = 'none';
+        }
+        
         setTimeout(calculateScore, 500);
     }
 }
 
 function previousQuestion(){
     scanChoices();
-    if(document.getElementsByClassName('leftNav')[0].style.opacity !== '0.4'){
-        questionNumber--;
-        if(questionNumber == 1){
-            document.getElementsByClassName('leftNav')[0].style.opacity = '0.4';
-        }else{
-            document.getElementsByClassName('leftNav')[0].style.opacity = '1';
+    if(devOrientation === 'portrait'){
+        if(document.getElementsByClassName('leftNav')[0].style.opacity !== '0.4'){
+            questionNumber--;
+            if(questionNumber == 1){
+                document.getElementsByClassName('leftNav')[0].style.opacity = '0.4';
+            }else{
+                document.getElementsByClassName('leftNav')[0].style.opacity = '1';
+            }
+            document.getElementsByClassName('question')[0].style.display = 'none';
+            for (var i = 0; i < 4; i++){
+                document.getElementsByClassName('choiceHolder')[i].style.display = 'none';
+            }
+            if(isGoingOver === true){
+                document.getElementById('explanationHolder').remove();
+            }
+            
+            setTimeout(removePreviousElementsAndCreateNewOnes, 150);
+            document.getElementsByClassName('midNav')[0].innerHTML = "Question " + questionNumber + " of 10"
         }
-        document.getElementsByClassName('question')[0].style.display = 'none';
-        for (var i = 0; i < 4; i++){
-            document.getElementsByClassName('choiceHolder')[i].style.display = 'none';
-        }
-        setTimeout(removePreviousElementsAndCreateNewOnes, 150);
-        document.getElementsByClassName('midNav')[0].innerHTML = "Question " + questionNumber + " of 10"
-    }
-    if(devOrientation === 'landscape'){
-        document.getElementsByClassName('rightNav')[0].innerHTML = 'Next question 🡢';
 
-    }else{
         document.getElementsByClassName('rightNav')[0].innerHTML = '🡢';
-    }
-}
-    
+        
+    }else{
 
-function startQuiz(){ 
-questionNumber = 1;
-randomChoice = [1, 2, 3, 4];
-userResults = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-userTimes = [];
-userStreaks = [];
-streaks = [];
+        if(document.getElementById('leftArrow').style.opacity !== '0.4'){
+            questionNumber--;
+            if(questionNumber == 1){
+                document.getElementById('leftArrow').style.opacity = '0.4';
+            }else{
+                document.getElementById('leftArrow').style.opacity = '1';
+            }
+            document.getElementsByClassName('question')[0].style.display = 'none';
+            for (var i = 0; i < 4; i++){
+                document.getElementsByClassName('choiceHolder')[i].style.display = 'none';
+            }
+            if(isGoingOver === true){
+                document.getElementById('explanationHolder').remove();
+            }
+            if(devOrientation === 'landscape'){
+                document.getElementById('rightArrow').style.display = 'none';
+                document.getElementById('leftArrow').style.display = 'none';
+            }
+            
+            setTimeout(removePreviousElementsAndCreateNewOnes, 150);
+
+        }
+
+    }
+    
+}
+
+function preStartQuiz(){
+    isGoingOver = false;
+    startQuiz();
+}
+
+function startQuiz(){
+    document.getElementById('quizContent').style.display = 'block';
+    document.getElementById('outerNavigation').style.display = 'block';
+    document.getElementById('outerNavigation').style.display = 'flex';
+    if(devOrientation === 'landscape'){
+        document.getElementById('leftArrow').style.display = 'block';
+        document.getElementById('rightArrow').style.display = 'block';
+        document.getElementById('leftArrow').style.opacity = '0.4';
+    }
+
+    document.getElementById('bigTitle').style.display = 'none';
+    document.getElementById('getStarted').style.display = 'none';
+    if(isGoingOver === false){
+    userResults = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    userTimes = [];
+    userStreaks = [];
+    streaks = [];
     storage = [];
     document.getElementById('bigTitle').style.display = 'none';
     document.getElementById('getStarted').style.display = 'none';
     rearrange(listOfQuestions);
-
+}
     var t = document.createElement('p');
     t.className = 'question';
     t.innerHTML = "1. " + listOfQuestions[questionNumber-1].question;
@@ -392,7 +527,7 @@ streaks = [];
     questionNumber = 1;
 
     for(var j = 0; j < listOfQuestions.length; j++){
-        if(listOfQuestions[j].type !== 'in order'){
+        if(listOfQuestions[j].type !== 'in order' && isGoingOver === false){
             rearrange(listOfQuestions[j].choices);
         }
     }
@@ -412,39 +547,42 @@ streaks = [];
         document.getElementsByClassName('choiceHolder')[i].appendChild(answerContent);
     }
 
-    var nav = document.createElement('div');
-    nav.id = 'navigation';
-    document.body.appendChild(nav);
-
-    var sNav = document.createElement('div');
-    sNav.id = 'subNavigation';
-    document.getElementById('navigation').appendChild(sNav);
-
-    var left = document.createElement('p');
-    if(devOrientation === 'landscape'){
-        left.innerHTML = '🡠 Prev. question'
+    if(devOrientation === 'portrait'){
+        var nav = document.createElement('div');
+        nav.id = 'navigation';
+        document.body.appendChild(nav);
     
-    }else{
-        left.innerHTML = '🡠'
+        var sNav = document.createElement('div');
+        sNav.id = 'subNavigation';
+        document.getElementById('navigation').appendChild(sNav);
+    
+        var left = document.createElement('p');
+        if(devOrientation === 'landscape'){
+            left.innerHTML = '🡠 Prev. question'
+        
+        }else{
+            left.innerHTML = '🡠'
+        }
+        
+        left.className = 'leftNav';
+        document.getElementById('subNavigation').appendChild(left);
+    
+        var mid = document.createElement ('p');
+        mid.innerHTML = 'Question 1 of 10';
+        mid.className = 'midNav';
+        document.getElementById('subNavigation').appendChild(mid);
+    
+        var right = document.createElement('p');
+        if(devOrientation === 'landscape'){
+            right.innerHTML = 'Next question 🡢'
+        }else{
+            right.innerHTML = '🡢';
+        }
+        
+        right.className = 'rightNav';
+        document.getElementById('subNavigation').appendChild(right);
     }
-    
-    left.className = 'leftNav';
-    document.getElementById('subNavigation').appendChild(left);
-
-    var mid = document.createElement ('p');
-    mid.innerHTML = 'Question 1 of 10';
-    mid.className = 'midNav';
-    document.getElementById('subNavigation').appendChild(mid);
-
-    var right = document.createElement('p');
-    if(devOrientation === 'landscape'){
-        right.innerHTML = 'Next question 🡢'
-    }else{
-        right.innerHTML = '🡢';
-    }
-    
-    right.className = 'rightNav';
-    document.getElementById('subNavigation').appendChild(right);
+   
 
     for(var j = 0; j < 4; j++){
         document.getElementsByClassName('choiceHolder')[j].addEventListener('click', select);
@@ -452,21 +590,97 @@ streaks = [];
 
     questionNumber = 1;
 
-    document.getElementsByClassName('rightNav')[0].addEventListener('click', nextQuestion);
-    document.getElementsByClassName('leftNav')[0].addEventListener('click', previousQuestion);
+    if(devOrientation === 'portrait'){
+        document.getElementsByClassName('rightNav')[0].addEventListener('click', nextQuestion);
+        document.getElementsByClassName('leftNav')[0].addEventListener('click', previousQuestion);
+    }else{
+        document.getElementById('rightArrow').addEventListener('click', nextQuestion);
+        document.getElementById('leftArrow').addEventListener('click', previousQuestion);
+    }
+    
     FirstDateGlobal = new Date().getTime();
     console.log(FirstDateGlobal);
+
+    if(isGoingOver === true){
+        if(userResults[questionNumber - 1] - 1 === listOfQuestions[questionNumber - 1].choices.indexOf(listOfQuestions[questionNumber - 1].answer)){
+            document.getElementsByClassName('choiceHolder')[userResults[questionNumber - 1] - 1].style.border = '2px solid green';
+            document.getElementsByClassName('choiceHolder')[userResults[questionNumber - 1] - 1].style.backgroundColor = 'lightgreen';
+            document.getElementsByClassName('choiceEmpty')[userResults[questionNumber - 1] - 1].style.backgroundColor = 'blue';
+
+        }else{
+            if(userResults[questionNumber - 1] - 1 === -1){
+                document.getElementsByClassName('choiceHolder')[listOfQuestions[questionNumber - 1].choices.indexOf(listOfQuestions[questionNumber - 1].answer)].style.border = '2px solid green';
+                document.getElementsByClassName('choiceHolder')[listOfQuestions[questionNumber - 1].choices.indexOf(listOfQuestions[questionNumber - 1].answer)].style.backgroundColor = 'lightgreen';
+
+            }else{
+                document.getElementsByClassName('choiceHolder')[listOfQuestions[questionNumber - 1].choices.indexOf(listOfQuestions[questionNumber - 1].answer)].style.border = '2px solid green';
+                document.getElementsByClassName('choiceHolder')[listOfQuestions[questionNumber - 1].choices.indexOf(listOfQuestions[questionNumber - 1].answer)].style.backgroundColor = 'lightgreen';
+
+                document.getElementsByClassName('choiceHolder')[userResults[questionNumber - 1] - 1].style.border = '2px solid red';
+                document.getElementsByClassName('choiceHolder')[userResults[questionNumber - 1] - 1].style.backgroundColor = '#e38484';
+                document.getElementsByClassName('choiceEmpty')[userResults[questionNumber - 1] - 1].style.backgroundColor = 'blue';
+            }
+        }
+        createExplanations();
+    }
+}
+
+function createExplanations(){
+    var d = document.createElement('div');
+    d.id = 'explanationHolder';
+    document.getElementById('quizContent').appendChild(d);
+
+    var z = document.createElement('p');
+    z.id = 'questionStatus';
+    if(userResults[questionNumber - 1] - 1 === listOfQuestions[questionNumber - 1].choices.indexOf(listOfQuestions[questionNumber - 1].answer)){ 
+        z.innerHTML = 'Question ' + questionNumber + ': ' + 'Correct'
+        document.getElementById('explanationHolder').style.backgroundColor = 'lightgreen';
+        document.getElementById('explanationHolder').style.border = '2px solid green';
+    }else{
+        if(userResults[questionNumber - 1] - 1 === -1){
+            z.innerHTML = 'Question ' + questionNumber + ': ' + 'Not answered'
+            document.getElementById('explanationHolder').style.backgroundColor = 'skyblue';
+            document.getElementById('explanationHolder').style.border = '2px solid blue';
+        }else{
+            z.innerHTML = 'Question ' + questionNumber + ': ' + 'Incorrect'
+            document.getElementById('explanationHolder').style.backgroundColor = '#e6aca8';
+            document.getElementById('explanationHolder').style.border = '2px solid red';
+        }
+    }
+    document.getElementById('explanationHolder').appendChild(z);
+
+    /*var y = document.createElement('p');
+    y.innerHTML = 'Explanation:';
+    y.id = 'explanation';
+    document.getElementById('explanationHolder').appendChild(y);*/
+
+    var x = document.createElement('p');
+    x.innerHTML = listOfQuestions[questionNumber - 1].explanation;
+    x.id = 'explanationContent';
+    document.getElementById('explanationHolder').appendChild(x);
 }
 
 function select(){
-    for (var j = 0; j < 4; j++){
-        document.getElementsByClassName('choiceEmpty')[j].style.backgroundColor = 'white';
-    }
-    if(this.getElementsByClassName('choiceEmpty')[0].style.backgroundColor === 'white'){
-        this.getElementsByClassName('choiceEmpty')[0].style.backgroundColor = 'blue';
-    }else{
-        this.getElementsByClassName('choiceEmpty')[0].style.backgroundColor = 'white';
+    if(isGoingOver === false){
+        for (var j = 0; j < 4; j++){
+            document.getElementsByClassName('choiceEmpty')[j].style.backgroundColor = 'white';
+        }
+        if(this.getElementsByClassName('choiceEmpty')[0].style.backgroundColor === 'white'){
+            this.getElementsByClassName('choiceEmpty')[0].style.backgroundColor = 'blue';
+        }else{
+            this.getElementsByClassName('choiceEmpty')[0].style.backgroundColor = 'white';
+        }
     }
 }
 
-document.getElementById('getStarted').addEventListener('click', startQuiz);
+document.getElementById('getStarted').addEventListener('click', preStartQuiz);
+
+
+/*Ah, a secret! Doesn't everybody like them?
+Don't you DARE paste this into the Inspect element - it's going to ruin your experience.
+javascript:document.body.contentEditable = true;
+document.designMode = 'on';
+void 0;
+
+Have fun!
+*/
