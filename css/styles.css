@@ -221,19 +221,19 @@ body{
 
 #topCaption{
     margin-top: 10%;
-    font-size: 250%;
+    font-size: 275%;
 }
 
 #scoreDisplay{
-    font-size: 200%;
+    font-size: 175%;
     margin-top: 1%;
 }
 
 #score{
-    font-size: 400%;
+    font-size: 100%;
     font-weight: bold;
     margin-top: 2%;
-    letter-spacing: 0.05em;
+    
 }
 
 #scoreBreakdown{
@@ -633,7 +633,7 @@ margin-top: 0;
     }
 
     #topCaption{
-        font-size: 175%;
+        font-size: 225%;
         margin-bottom: 5%;
         margin-left: 5%;
         margin-right: 5%;
@@ -645,15 +645,12 @@ margin-top: 0;
     }
 
     #scoreDisplay{
-        font-size: 150%;
+        font-size: 175%;
         margin-bottom: 5%;
         
     }
 
-    #score{
-        margin-bottom:2.5%;
-        font-size: 300%;
-    }
+
 
     #scoreBreakdown{
         margin-top: 5%;
