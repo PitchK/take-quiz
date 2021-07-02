@@ -220,7 +220,7 @@ body{
 }
 
 #topCaption{
-    margin-top: 2%;
+    margin-top: 10%;
     font-size: 250%;
 }
 
@@ -450,16 +450,17 @@ margin-top: 0;
 #explanationHolder{
     margin-bottom: 25%;
     border-radius: 10px;
-    padding: 4%;
-    margin-top: 3%;
-    margin-left: 5%;
-    margin-right: 2.5%;
+    padding: 2% 4%;
+    margin-top: 2%;
+    margin-left: 17.5%;
+    margin-right: 17.5%;
 
 }
 
 #questionStatus{
     font-size: 175%;
     margin-top: 0;
+    padding-top: 0;
 }
 
 #explanation{
@@ -487,8 +488,8 @@ margin-top: 0;
 }
 #topNavigation{
     display: flex;
-    margin-left: 40%;
-    width: 50%;
+    margin-left: 45%;
+    width: 45%;
     margin-right: 5%;
 }
 
@@ -497,13 +498,20 @@ margin-top: 0;
     padding: 1%;
     text-align: center;
     font-size: 135%;
+    transition: 0.5s;
+    -webkit-user-select: none;
+    opacity: 1;
 }
+
 
 #right{
     width: 50%;
     padding: 1%;
     text-align: center;
     font-size: 135%;
+    transition: 0.5s;
+    -webkit-user-select: none;
+    opacity: 0.4;
 }
 
 
@@ -520,10 +528,16 @@ margin-top: 0;
 
 #left:hover{
     cursor: pointer;
+    color: green;
+    transition: 0.5s;
+
 }
 
 #right:hover{
     cursor: pointer;
+    color: green;
+    transition: 0.5s;
+
 }
 
 #flexQuizContent{
@@ -548,7 +562,7 @@ margin-top: 0;
     .question{
         padding-bottom: 5%;
         line-height: 1.2;
-        font-size: 160%;
+        font-size: 150%;
     }
 
     #getStarted{
@@ -647,5 +661,33 @@ margin-top: 0;
         margin-left: 0%;
         margin-right: 0%;
     
+    }
+
+    #title{
+        font-size: 135%;
+        padding-bottom: 4%;
+        padding-top: 4%;
+    }
+
+    #topNavigation{
+        flex-direction: column;
+        font-size: 85%;
+        margin-left: 20%;
+    }
+
+    #left{
+        width: 100%;
+        margin-top: auto;
+        margin-bottom: auto;
+        text-decoration: underline;
+ 
+    }
+
+    #right{
+        width: 100%;
+        margin-top: auto;
+        margin-bottom: auto;
+        text-decoration: underline;
+        display: block;
     }
 }

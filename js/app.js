@@ -11,6 +11,7 @@ var detect;
 var FirstDateGlobal;
 var isGoingOver;
 var actualGoingOver;
+var quizInProgress;
 
 //setup
 for(var i = 0; i < 10; i++){
@@ -60,6 +61,18 @@ function scanChoices(){
 }
 
 function goOver(){
+
+    if(devOrientation === 'landscape'){
+        document.getElementById('left').style.opacity = '1';
+        document.getElementById('right').style.opacity = '1';
+        document.getElementById('right').style.opacity = '1';
+    }else{
+        document.getElementById('right').style.display = 'block';
+        document.getElementById('left').style.display = 'none';
+        
+        
+    }
+    
     for (var i = 0; i < 4; i++){
         document.getElementsByClassName('holder')[0].remove();
     }
@@ -74,15 +87,28 @@ function goOver(){
     if(devOrientation === 'landscape'){
         document.getElementById('firstDetailHolder').remove();
     }
-
+    document.getElementById('quizContent').style.display = 'block';
+    document.getElementById('flexQuizContent').style.display = 'block';
+    document.getElementById('flexQuizContent').style.display = 'flex';
     document.getElementById('imtoolazyforthis').style.display = 'none';
     isGoingOver = true;
+    
     startQuiz();
 }
 
 function calculateScore(){
-    
-    document.getElementById('quizContent').style.display = 'block';
+    quizInProgress = false;
+    document.getElementById('quizContent').style.display = 'none';
+    document.getElementById('flexQuizContent').style.display = 'none';
+    if(devOrientation === 'portrait'){
+        document.getElementById('left').style.display = 'block';
+        document.getElementById('right').style.display = 'none';
+    }else{
+        document.getElementById('left').style.display = 'block';
+        document.getElementById('right').style.display = 'block';
+        document.getElementById('left').style.opacity = '1';
+        document.getElementById('right').style.opacity = '0.4';
+    }
     
     if(isGoingOver === true){
         document.getElementById('explanationHolder').remove();
@@ -194,19 +220,88 @@ function calculateScore(){
 }
 
 function revert(){
-    for (var i = 0; i < 4; i++){
-        document.getElementsByClassName('holder')[0].remove();
+    
+    if(document.getElementById('left').style.opacity !== '0.4'){
+        
+        if(quizInProgress === false){
+            if(confirm('Are you sure you want to quit?')){
+                document.getElementById('outerNavigation').style.display = 'none';
+                for (var i = 0; i < 4; i++){
+                    document.getElementsByClassName('holder')[0].remove();
+                }
+            
+                for (var j = 0; j < 10; j++){
+                    if(devOrientation === 'landscape'){
+                        document.getElementsByClassName('detailHolder')[0].remove();
+                    }  
+                }
+    
+                document.getElementById('linkHolder').remove();
+                if (devOrientation === 'landscape'){
+                    document.getElementById('firstDetailHolder').remove();
+                }
+               
+                document.getElementById('imtoolazyforthis').style.display = 'none';
+                document.getElementById('topHeader').style.display = 'block';
+                document.getElementById('bigTitle').style.display = 'block';
+                document.getElementById('getStarted').style.display = 'block';
+            }
+            
+        }else{
+            if(confirm('Are you sure you want to quit?')){
+                document.getElementById('outerNavigation').style.display = 'none';
+                if(devOrientation === 'portrait'){
+                    document.getElementById('left').style.opacity = '0.4';
+                    for (var i = 0; i < 4; i++){
+                        document.getElementsByClassName('choiceHolder')[0].remove();
+                    }
+                    document.getElementsByClassName('question')[0].remove();
+                    document.getElementById('navigation').remove();
+                }else{
+                    document.getElementById('left').style.opacity = '0.4';
+                    for (var i = 0; i < 4; i++){
+                        document.getElementsByClassName('choiceHolder')[0].remove();
+                    }
+                    document.getElementsByClassName('question')[0].remove();
+                    document.getElementById('leftArrow').style.display = 'none';
+                    document.getElementById('rightArrow').style.display = 'none';
+                }
+               
+                document.getElementById('topHeader').style.display = 'block';
+                document.getElementById('bigTitle').style.display = 'block';
+                document.getElementById('getStarted').style.display = 'block';
+                if(isGoingOver === true){
+                    document.getElementById('explanationHolder').remove();
+                }
+            }
+        }
     }
+}
 
-    for (var j = 0; j < 10; j++){
-        document.getElementsByClassName('detailHolder')[0].remove();
+function preCalculateScore(){
+    if (isGoingOver === true){
+        document.getElementById('quizContent').style.display = 'none';
+        document.getElementById('flexQuizContent').style.display = 'none';
+    
+        this.style.opacity = '0.4';
+        
+        document.getElementsByClassName('question')[0].remove();
+        for(var i = 0; i < 4; i++){
+            document.getElementsByClassName('choiceHolder')[0].remove();
+        }
+        if(devOrientation === 'portrait'){
+            document.getElementById('navigation').remove();
+        }else{
+            document.getElementById('leftArrow').style.display = 'none';
+            document.getElementById('rightArrow').style.display = 'none';
+        }
+        document.getElementById('explanationHolder').remove();
+        setTimeout(calculateScore, 500);
+        isGoingOver = false;
+    
+    
     }
-    document.getElementById('linkHolder').remove();
-    document.getElementById('firstDetailHolder').remove();
-    document.getElementById('imtoolazyforthis').style.display = 'none';
-    document.getElementById('topHeader').style.display = 'block';
-    document.getElementById('bigTitle').style.display = 'block';
-    document.getElementById('getStarted').style.display = 'block';
+    
 }
 
 var alphabeticalReference = ['N/A', 'A', 'B', 'C', 'D'];
@@ -429,7 +524,7 @@ function nextQuestion(){
             document.getElementsByClassName('choiceHolder')[0].remove();
         }
         if(devOrientation === 'portrait'){
-            document.getElementById('navigation').style.bottom = '-50%';
+            document.getElementById('navigation').remove();
         }else{
             document.getElementById('leftArrow').style.display = 'none';
             document.getElementById('rightArrow').style.display = 'none';
@@ -483,13 +578,9 @@ function previousQuestion(){
                 document.getElementById('rightArrow').style.display = 'none';
                 document.getElementById('leftArrow').style.display = 'none';
             }
-            
             setTimeout(removePreviousElementsAndCreateNewOnes, 150);
-
         }
-
     }
-    
 }
 
 function preStartQuiz(){
@@ -498,33 +589,54 @@ function preStartQuiz(){
 }
 
 function startQuiz(){
+    document.getElementById('left').style.opacity = '1';
+    document.getElementById('right').style.opacity = '0.4';
+    quizInProgress = true;
     document.getElementById('quizContent').style.display = 'block';
+    document.getElementById('flexQuizContent').style.display = 'block';
+    document.getElementById('flexQuizContent').style.display = 'flex';
     document.getElementById('outerNavigation').style.display = 'block';
     document.getElementById('outerNavigation').style.display = 'flex';
     if(devOrientation === 'landscape'){
         document.getElementById('leftArrow').style.display = 'block';
         document.getElementById('rightArrow').style.display = 'block';
         document.getElementById('leftArrow').style.opacity = '0.4';
+        if(isGoingOver === true){
+            document.getElementById('right').style.opacity = '1';
+        }
+        
+
+    }else{
+        if(isGoingOver === false){
+            document.getElementById('right').style.display = 'none';
+            document.getElementById('left').style.display = 'block';
+        }else{
+            document.getElementById('right').style.display = 'block';
+            document.getElementById('left').style.display = 'none';
+            
+        }
+        
     }
 
     document.getElementById('bigTitle').style.display = 'none';
     document.getElementById('getStarted').style.display = 'none';
     if(isGoingOver === false){
-    userResults = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    userTimes = [];
-    userStreaks = [];
-    streaks = [];
-    storage = [];
-    document.getElementById('bigTitle').style.display = 'none';
-    document.getElementById('getStarted').style.display = 'none';
-    rearrange(listOfQuestions);
-}
+        userResults = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        userTimes = [];
+        userStreaks = [];
+        streaks = [];
+        storage = [];
+        document.getElementById('bigTitle').style.display = 'none';
+        document.getElementById('getStarted').style.display = 'none';
+        rearrange(listOfQuestions);
+    }
+    questionNumber = 1;
     var t = document.createElement('p');
     t.className = 'question';
     t.innerHTML = "1. " + listOfQuestions[questionNumber-1].question;
     document.getElementById('quizContent').appendChild(t);
 
-    questionNumber = 1;
+    
 
     for(var j = 0; j < listOfQuestions.length; j++){
         if(listOfQuestions[j].type !== 'in order' && isGoingOver === false){
@@ -628,7 +740,12 @@ function startQuiz(){
 function createExplanations(){
     var d = document.createElement('div');
     d.id = 'explanationHolder';
-    document.getElementById('quizContent').appendChild(d);
+    if(devOrientation === 'portrait'){
+        document.getElementById('quizContent').appendChild(d);
+    }else{
+        document.body.appendChild(d);
+    }
+    
 
     var z = document.createElement('p');
     z.id = 'questionStatus';
@@ -674,7 +791,8 @@ function select(){
 }
 
 document.getElementById('getStarted').addEventListener('click', preStartQuiz);
-
+document.getElementById('left').addEventListener('click', revert);
+document.getElementById('right').addEventListener('click', preCalculateScore);
 
 /*Ah, a secret! Doesn't everybody like them?
 Don't you DARE paste this into the Inspect element - it's going to ruin your experience.
