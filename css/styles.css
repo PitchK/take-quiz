@@ -1,10 +1,11 @@
+html{
+    scroll-behavior: smooth;
+}
 
 body{
     font-family: 'Newsreader', serif;
     overflow-X: hidden;
 }
-
-
 
 #leftArrow{
     display: none;
@@ -18,6 +19,7 @@ body{
 #bigTitle{
     text-align: center;
     font-size: 400%;
+    margin-bottom: 4%;
 }
 
 #getStarted{
@@ -30,7 +32,7 @@ body{
     margin-right: 40%;
     padding: 1.2%;
     border-radius: 15px;
-    
+    opacity: 0.4;
     -webkit-user-select: none;
 }
 
@@ -217,16 +219,17 @@ body{
 #imtoolazyforthis{
     display: none;
     text-align: center;
+    margin-top: 0;
 }
 
 #topCaption{
-    margin-top: 10%;
+    margin-top: 5%;
     font-size: 275%;
 }
 
 #scoreDisplay{
     font-size: 175%;
-    margin-top: 1%;
+    margin-top: 2%;
 }
 
 #score{
@@ -446,7 +449,11 @@ margin-top: 0;
     width: 100.2%;
 }
 
-
+#line{
+    margin-left: 32.5%;
+    margin-right: 32.5%;
+    margin-top: 0;
+}
 #explanationHolder{
     margin-bottom: 25%;
     border-radius: 10px;
@@ -487,7 +494,7 @@ margin-top: 0;
 
     position: relative;
     border-bottom: 2px solid darkgreen;
-    margin-bottom: 2%;
+    margin-bottom: 0;
     display: flex;
 }
 #topNavigation{
@@ -546,6 +553,98 @@ margin-top: 0;
 
 #flexQuizContent{
     display: flex;
+    margin: 0;
+}
+
+#quizOptions{
+    margin-top: 3%;
+    margin-left: 15%;
+    font-size: 200%;
+}
+
+.quizOptionHolder{
+    display: flex;
+}
+
+.emptyQuizOption{
+    height: 35px;
+    width: 35px;
+    border: 3px solid green;
+    border-radius: 50%;
+    margin-left: 15%;
+    background-color: white;
+}
+
+.emptyQuizOption:hover{
+    cursor: pointer;
+}
+
+.emptyQuizContent{
+    font-size: 175%;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 2%;
+}
+
+.quizDescription{
+    margin-left: 15%;
+    opacity: 0.9;
+    font-size: 135%;
+    margin-top: 0.2%;
+    margin-right: 15%;
+}
+
+#secondOption{
+    
+    margin-left: 15%;
+    display: flex;
+    display: none;
+
+}
+
+#chooseTime{
+    font-size: 150%;
+}
+
+#timeHolder{
+    display: flex;
+    width: 50%;
+    margin-left: 1%;
+}
+
+.subTimeHolder{
+    display: flex;
+    margin-left: 5%;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 33%;
+}
+
+.emptyTime{
+    width: 25px;
+    height: 25px;
+    border: 2px solid blue;
+    border-radius: 50%;
+    background-color: white;
+}
+
+.emptyTime:hover{
+    cursor: pointer;
+}
+
+.timeContent{
+    margin-left: 3.5%;
+    font-size: 150%;
+    margin-top: auto;
+    margin-bottom: auto;
+    max-width: 65%;
+}
+
+#disclaimer{
+    margin-left: 15%;
+    font-size: 135%;
+    margin-right: 15%;
+    display: none;
 }
 @media only screen and (orientation: portrait){
 
@@ -576,13 +675,14 @@ margin-top: 0;
         font-size: 225%;
         padding-top: 3%;
         padding-bottom: 3%;
+        opacity: 0.4;
     }
 
     #bigTitle{
-        font-size: 325%;
+        font-size: 250%;
         margin-left: 5%;
         margin-right: 5%;
-
+      
     }
 
     .choiceContent{
@@ -707,6 +807,77 @@ margin-top: 0;
     }
     .second{
         font-size: 225%;
+    }
+
+
+    #secondOption{
+        flex-direction: column;
+        
+    }
+
+    .quizDescription{
+        margin-left: 5%;
+        margin-right: 5%;
+        line-height: 1.2;
+        font-size: 125%;
+    }
+
+    #quizOptions{
+        margin-left: 5%;
+    }
+
+    .emptyQuizOption{
+        margin-left: 5%;
+    }
+
+    .emptyQuizContent{
+        margin-left:5%;
+    }
+
+    #secondOption{
+        margin-left: 5%;
+    }
+
+    #quizOptions{
+        margin-top: 7%;
+        font-size: 175%;
+    }
+
+    #bigTitle{
+        margin-top: 4%;
+        padding-bottom: 4%;
+    }
+
+    #timeHolder{
+        width: 90%;
+        
+    }
+
+    .subTimeHolder{
+        width: 100%;
+        margin-left: 2.5%;
+        display: inline;
+    }
+    .timeContent{
+        max-width: 100%;
+
+    }
+
+    #chooseTime{
+        margin-bottom: 2%;
+        
+    }
+
+    #disclaimer{
+        margin-left: 5%;
+        margin-top: 10%;
+        line-height: 1.2;
+        font-size: 125%;
+        opacity: 0.9;
+    }
+
+    .emptyQuizContent{
+        font-size: 150%;
     }
 
 }
